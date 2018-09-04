@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>QtGuiApplication1Class</class>
+ <widget class="QMainWindow" name="QtGuiApplication1Class">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>480</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>600</width>
+    <height>480</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>QtGuiApplication1</string>
+  </property>
+  <widget class="MyOpenGLWidget" name="centralWidget"/>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="actionClear"/>
+   <addaction name="separator"/>
+   <addaction name="actionLight"/>
+   <addaction name="actionShow_Normals"/>
+   <addaction name="actionNormal_Map_Color"/>
+   <addaction name="separator"/>
+   <addaction name="actionSnapShot"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/open.png</normaloff>:/QtGuiApplication1/Resources/icons/open.png</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/save.png</normaloff>:/QtGuiApplication1/Resources/icons/save.png</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/eraser.png</normaloff>:/QtGuiApplication1/Resources/icons/eraser.png</iconset>
+   </property>
+   <property name="text">
+    <string>Clear</string>
+   </property>
+  </action>
+  <action name="actionLight">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/lighton.png</normaloff>:/QtGuiApplication1/Resources/icons/lighton.png</iconset>
+   </property>
+   <property name="text">
+    <string>Light</string>
+   </property>
+  </action>
+  <action name="actionShow_Normals">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/heyzap_128x128-32.png</normaloff>:/QtGuiApplication1/Resources/icons/heyzap_128x128-32.png</iconset>
+   </property>
+   <property name="text">
+    <string>Show Normals</string>
+   </property>
+  </action>
+  <action name="actionNormal_Map_Color">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/rgbt.png</normaloff>:/QtGuiApplication1/Resources/icons/rgbt.png</iconset>
+   </property>
+   <property name="text">
+    <string>Normal Map Color</string>
+   </property>
+  </action>
+  <action name="actionSnapShot">
+   <property name="icon">
+    <iconset resource="QtGuiApplication1.qrc">
+     <normaloff>:/QtGuiApplication1/Resources/icons/125.png</normaloff>:/QtGuiApplication1/Resources/icons/125.png</iconset>
+   </property>
+   <property name="text">
+    <string>SnapShot</string>
+   </property>
+   <property name="shortcut">
+    <string>F5</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MyOpenGLWidget</class>
+   <extends>QWidget</extends>
+   <header>myopenglwidget.h</header>
+   <slots>
+    <signal>xRotationChanged(int)</signal>
+    <signal>yRotationChanged(int)</signal>
+    <signal>zRotationChanged(int)</signal>
+    <slot>setXRotation(int)</slot>
+    <slot>setYRotation(int)</slot>
+    <slot>setZRotation(int)</slot>
+    <slot>setLight(bool)</slot>
+    <slot>setShowNormals(bool)</slot>
+    <slot>setNormalMapColor(bool)</slot>
+    <slot>onActionSnapshot()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="QtGuiApplication1.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionClear</sender>
+   <signal>triggered()</signal>
+   <receiver>centralWidget</receiver>
+   <slot>update()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionLight</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>setLight(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShow_Normals</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>setShowNormals(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNormal_Map_Color</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>setNormalMapColor(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSnapShot</sender>
+   <signal>triggered()</signal>
+   <receiver>centralWidget</receiver>
+   <slot>onActionSnapshot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>QtGuiApplication1Class</sender>
+   <signal>updateStatusBar(QString)</signal>
+   <receiver>statusBar</receiver>
+   <slot>showMessage(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>469</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>updateStatusBar(QString)</signal>
+ </slots>
+</ui>
