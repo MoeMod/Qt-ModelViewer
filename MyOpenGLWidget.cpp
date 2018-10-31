@@ -1,5 +1,6 @@
 #include "MyOpenGLWidget.h"
-#include "PointManager.h"
+#include "MeshFile.h"
+#include "main.h"
 
 #include <QEvent.h>
 #include <QApplication.h>
@@ -58,6 +59,11 @@ void MyOpenGLWidget::resizeGL(int w, int h)
 
 void MyOpenGLWidget::paintGL()
 {
+	if (!GlobalVars().pMeshFile)
+		return QGLWidget::paintGL();
+
+	auto &mesh = GlobalVars().pMeshFile->Data();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glLoadIdentity();
 	glScalef(scale, scale, scale);
@@ -67,6 +73,19 @@ void MyOpenGLWidget::paintGL()
 
 	glPointSize(pointsize);
 	
+	// draw face
+	for(auto &face : mesh.faces())
+	{
+		glBegin(GL_TRIANGLES);
+		for(auto &fv : mesh.fv_range(face))
+		{
+			glNormal3fv(mesh.normal(fv).data());
+			glVertex3fv(mesh.point(fv).data());
+		}
+		glEnd();
+	}
+
+	/*
 	if (m_bNormalMapColor)
 	{
 		for (auto &poi : PointManager())
@@ -99,7 +118,7 @@ void MyOpenGLWidget::paintGL()
 		}
 		glEnd();
 	}
-
+	*/
 	
 	
 }

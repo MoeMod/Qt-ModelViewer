@@ -3,7 +3,8 @@
 #include <QFileDialog.h>
 #include <QMessageBox.h>
 
-#include "PointManager.h"
+#include "MeshFile.h"
+#include "main.h"
 #include "util.h"
 
 QtGuiApplication1::QtGuiApplication1(QWidget *parent)
@@ -19,14 +20,14 @@ QtGuiApplication1::QtGuiApplication1(QWidget *parent)
 
 void QtGuiApplication1::OnActionOpen()
 {
-	QString filename = QFileDialog::getOpenFileName(this, "Load ply file", {}, tr("PLY file (*.ply)"));
+	QString filename = QFileDialog::getOpenFileName(this, "Load ply file", {}, tr("Model file (*.*)"));
 	if(!filename.isEmpty())
 	{
 		try
 		{
-			PointManager().LoadFromFile(filename.toStdWString());
+			GlobalVars().pMeshFile = std::make_unique<CMeshFile>(filename.toStdString());
 			
-			updateStatusBar(QString::fromStdString(MakeString("Points Count:", PointManager().size())));
+			updateStatusBar(QString::fromStdString(MakeString("current file: ", filename.toStdString())));
 		}
 		catch (const std::exception &e)
 		{
@@ -42,7 +43,8 @@ void QtGuiApplication1::OnActionSave()
 	{
 		try
 		{
-			PointManager().SaveToFile(filename.toStdWString());
+			if (!GlobalVars().pMeshFile) throw std::runtime_error("nothing to be saved.");
+			GlobalVars().pMeshFile->SaveToFile(filename.toStdString());
 		}
 		catch (const std::exception &e)
 		{
@@ -53,7 +55,7 @@ void QtGuiApplication1::OnActionSave()
 
 void QtGuiApplication1::OnActionClear()
 {
-	PointManager().clear();
+	// TO BE DONE
 	
 }
 
