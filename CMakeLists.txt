@@ -56,6 +56,11 @@ ADD_SUBDIRECTORY(OpenMesh)
 # 修复一些莫名其妙的编译错误
 add_definitions(-D_USE_MATH_DEFINES)
 
+# 不知道为什么macOS 10.14抛弃了opengl...
+if(APPLE)
+	add_definitions(-DGL_SILENCE_DEPRECATION)
+endif()
+
 # 让Qt生成moc代码
 qt5_wrap_cpp( GEN_MOC ${FILE_MOC})
 qt5_wrap_ui( GEN_UIC ${FILE_UI})

@@ -4,6 +4,13 @@
 
 void CMeshFile::LoadFromFile(const std::string &filename)
 {
+	mesh.request_vertex_normals();
+	//如果不存在顶点法线，则报错
+	if (!mesh.has_vertex_normals())
+	{
+		throw std::runtime_error("错误：标准定点属性 “法线”不存在");
+	}
+
 	// 读取文件，错误就throw
 	OpenMesh::IO::Options opt;
 	if (!OpenMesh::IO::read_mesh(mesh, filename, opt))
