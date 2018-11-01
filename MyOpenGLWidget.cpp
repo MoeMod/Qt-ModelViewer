@@ -1,6 +1,5 @@
 #include "MyOpenGLWidget.h"
 #include "MeshFile.h"
-#include "main.h"
 
 #include <QEvent.h>
 #include <QApplication.h>
@@ -33,7 +32,7 @@ void MyOpenGLWidget::initializeGL()
 	glClearColor(255, 255, 255, 255);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	//glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -49,103 +48,82 @@ void MyOpenGLWidget::resizeGL(int w, int h)
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-/*#ifdef QT_OPENGL_ES_1
-	glOrthof(-2, +2, -2, +2, 1.0, 15.0);
-#else
-	glOrtho(-2, +2, -2, +2, 1.0, 15.0);
-#endif*/
 	glMatrixMode(GL_MODELVIEW);
 }
 
 void MyOpenGLWidget::paintGL()
 {
-	if (!GlobalVars().pMeshFile)
-		return QGLWidget::paintGL();
-
-	auto &mesh = GlobalVars().pMeshFile->Data();
-
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+
 	glLoadIdentity();
 	glScalef(scale, scale, scale);
 	glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
 	glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
 	glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
 
-	glPointSize(pointsize);
+	// nothing to draw
+	if (!m_upGL_List)
+		return;
 
 	// draw line
-	/*glDisable(GL_LIGHTING);
-	glLineWidth(1.0f);
-	glColor3f(0.5f, 0.5f, 0.5f);
-	glBegin(GL_LINES);
-	for(auto &&he : mesh.halfedges())
-	{
-		//链接这个有向边的起点和终点
-		glVertex3fv(mesh.point(mesh.from_vertex_handle(he)).data());
-		glVertex3fv(mesh.point(mesh.to_vertex_handle(he)).data());
-	}
-	glEnd();
-	glEnable(GL_LIGHTING);*/
+	//m_upGL_List->showWireList.Call();
 
 	// draw face
-	for(auto &&face : mesh.faces())
-	{
-		glBegin(GL_TRIANGLES);
-		for(auto &&fv : mesh.fv_range(face))
-		{
-			glNormal3fv(mesh.normal(fv).data());
-			glVertex3fv(mesh.point(fv).data());
-		}
-		glEnd();
-	}
+	m_upGL_List->showFaceList.Call();
+}
 
-	/*
-	if (m_bNormalMapColor)
+void MyOpenGLWidget::onUpdateContent(std::shared_ptr<CMeshFile> sp)
+{
+	m_spFile = sp;
+	m_upGL_List = nullptr; // resets
+
+	if (m_spFile)
 	{
-		for (auto &poi : PointManager())
+		auto &mesh = m_spFile->Data();
+		m_upGL_List = std::make_unique<Lists>();
+
+		m_upGL_List->showFaceList.New();
+		for (auto &&face : mesh.faces())
 		{
-			glColor3fv(poi.normal * 0.5f + Vector(0.5f, 0.5f, 0.5f));
-			glBegin(GL_POINTS);
-			glVertex3fv(poi.verticle);
+			glBegin(GL_TRIANGLES);
+			for (auto &&fv : mesh.fv_range(face))
+			{
+				glNormal3fv(mesh.normal(fv).data());
+				glVertex3fv(mesh.point(fv).data());
+			}
 			glEnd();
 		}
+		m_upGL_List->showFaceList.End();
 
-	}
-	else
-	{
-		glColor4ub(0, 0, 0, 255);
-		glBegin(GL_POINTS);
-		std::for_each(PointManager().verticles().begin(), PointManager().verticles().end(), glVertex3fv);
-		glEnd();
-	}
-
-	
-
-	if (m_bShowNormals)
-	{
-		glColor4ub(0, 0, 255, 255);
+		m_upGL_List->showWireList.New();
+		glDisable(GL_LIGHTING);
+		glLineWidth(1.0f);
+		glColor3f(0.5f, 0.5f, 0.5f);
 		glBegin(GL_LINES);
-		for (auto &poi : PointManager())
+		for (auto &&he : mesh.halfedges())
 		{
-			glVertex3fv(poi.verticle);
-			glVertex3fv(poi.verticle + poi.normal * 0.0625f);
+			//链接这个有向边的起点和终点
+			glVertex3fv(mesh.point(mesh.from_vertex_handle(he)).data());
+			glVertex3fv(mesh.point(mesh.to_vertex_handle(he)).data());
 		}
 		glEnd();
+		glEnable(GL_LIGHTING);
+		m_upGL_List->showWireList.End();
 	}
-	*/
-	
-	
+
+	updateGL();
 }
 
 void MyOpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
-	lastPos = event->pos();
+	m_LastMousePos = event->pos();
 }
 
 void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	int dx = event->x() - lastPos.x();
-	int dy = event->y() - lastPos.y();
+	int dx = event->x() - m_LastMousePos.x();
+	int dy = event->y() - m_LastMousePos.y();
 
 	if (event->buttons() & Qt::LeftButton) {
 		setXRotation(xRot + 8 * dy);
@@ -156,7 +134,7 @@ void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 		setZRotation(zRot + 8 * dx);
 	}
 
-	lastPos = event->pos();
+	m_LastMousePos = event->pos();
 }
 
 void MyOpenGLWidget::wheelEvent(QWheelEvent *event)
@@ -226,6 +204,7 @@ void MyOpenGLWidget::onActionSnapshot()
 
 	QImage qi( w, h, QImage::Format::Format_RGBA8888);
 
+	updateGL();
 	glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, qi.bits());
 
 	qi = std::move(qi).mirrored();

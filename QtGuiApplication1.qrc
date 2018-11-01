@@ -1,11 +1,1 @@
-<RCC>
-  <qresource prefix="QtGuiApplication1">
-    <file>Resources/icons/125.png</file>
-    <file>Resources/icons/rgbt.png</file>
-    <file>Resources/icons/heyzap_128x128-32.png</file>
-    <file>Resources/icons/lighton.png</file>
-    <file>Resources/icons/eraser.png</file>
-    <file>Resources/icons/save.png</file>
-    <file>Resources/icons/open.png</file>
-  </qresource>
-</RCC>
+<RCC/>

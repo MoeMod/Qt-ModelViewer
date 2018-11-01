@@ -34,57 +34,77 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="separator"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="actionClear"/>
-   <addaction name="separator"/>
-   <addaction name="actionLight"/>
-   <addaction name="actionShow_Normals"/>
-   <addaction name="actionNormal_Map_Color"/>
-   <addaction name="separator"/>
-   <addaction name="actionSnapShot"/>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuDisplay">
+    <property name="title">
+     <string>&amp;Display</string>
+    </property>
+    <addaction name="actionLight"/>
+    <addaction name="actionShow_Normals"/>
+    <addaction name="actionNormal_Map_Color"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionSnapShot"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuDisplay"/>
+   <addaction name="menuHelp"/>
   </widget>
   <action name="actionOpen">
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/open.png</normaloff>:/QtGuiApplication1/Resources/icons/open.png</iconset>
-   </property>
    <property name="text">
-    <string>Open</string>
+    <string>Open(&amp;O)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionSave">
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/save.png</normaloff>:/QtGuiApplication1/Resources/icons/save.png</iconset>
-   </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save(&amp;S)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionClear">
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/eraser.png</normaloff>:/QtGuiApplication1/Resources/icons/eraser.png</iconset>
-   </property>
    <property name="text">
-    <string>Clear</string>
+    <string>Clear(&amp;C)</string>
    </property>
   </action>
   <action name="actionLight">
    <property name="checkable">
     <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/lighton.png</normaloff>:/QtGuiApplication1/Resources/icons/lighton.png</iconset>
    </property>
    <property name="text">
     <string>Light</string>
@@ -94,10 +114,6 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/heyzap_128x128-32.png</normaloff>:/QtGuiApplication1/Resources/icons/heyzap_128x128-32.png</iconset>
-   </property>
    <property name="text">
     <string>Show Normals</string>
    </property>
@@ -106,24 +122,26 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/rgbt.png</normaloff>:/QtGuiApplication1/Resources/icons/rgbt.png</iconset>
-   </property>
    <property name="text">
     <string>Normal Map Color</string>
    </property>
   </action>
   <action name="actionSnapShot">
-   <property name="icon">
-    <iconset resource="QtGuiApplication1.qrc">
-     <normaloff>:/QtGuiApplication1/Resources/icons/125.png</normaloff>:/QtGuiApplication1/Resources/icons/125.png</iconset>
-   </property>
    <property name="text">
-    <string>SnapShot</string>
+    <string>SnapShot(&amp;S)</string>
    </property>
    <property name="shortcut">
     <string>F5</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About(&amp;A)</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit(&amp;Q)</string>
    </property>
   </action>
  </widget>
@@ -144,6 +162,7 @@
     <slot>setShowNormals(bool)</slot>
     <slot>setNormalMapColor(bool)</slot>
     <slot>onActionSnapshot()</slot>
+    <slot>onUpdateContent(std::shared_ptr&lt;CMeshFile&gt;)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -151,22 +170,6 @@
   <include location="QtGuiApplication1.qrc"/>
  </resources>
  <connections>
-  <connection>
-   <sender>actionClear</sender>
-   <signal>triggered()</signal>
-   <receiver>centralWidget</receiver>
-   <slot>update()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>299</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>actionLight</sender>
    <signal>toggled(bool)</signal>
@@ -247,8 +250,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>QtGuiApplication1Class</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>QtGuiApplication1Class</sender>
+   <signal>onFileUpdated(std::shared_ptr&lt;CMeshFile&gt;)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>onUpdateContent(std::shared_ptr&lt;CMeshFile&gt;)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>299</x>
+     <y>239</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>234</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>updateStatusBar(QString)</signal>
+  <signal>onFileUpdated(std::shared_ptr&lt;CMeshFile&gt;)</signal>
  </slots>
 </ui>

@@ -3,8 +3,12 @@
 #include <QFileDialog.h>
 #include <QMessageBox.h>
 
+#include <QDropEvent>
+#include <QDragEnterEvent>
+#include <QFile>
+#include <QMimeData>
+
 #include "MeshFile.h"
-#include "main.h"
 #include "util.h"
 
 QtGuiApplication1::QtGuiApplication1(QWidget *parent)
@@ -15,19 +19,21 @@ QtGuiApplication1::QtGuiApplication1(QWidget *parent)
 	connect(ui.actionOpen, &QAction::triggered, this, &QtGuiApplication1::OnActionOpen);
 	connect(ui.actionSave, &QAction::triggered, this, &QtGuiApplication1::OnActionSave);
 	connect(ui.actionClear, &QAction::triggered, this, &QtGuiApplication1::OnActionClear);
-	updateStatusBar("No file Loaded");
+	connect(ui.actionAbout, &QAction::triggered, this, &QtGuiApplication1::OnActionAbout);
+	updateStatusBar("Drag model file to open");
+	setAcceptDrops(true);
 }
 
 void QtGuiApplication1::OnActionOpen()
 {
-	QString filename = QFileDialog::getOpenFileName(this, "Load ply file", {}, tr("Model file (*.*)"));
+	QString filename = QFileDialog::getOpenFileName(this, "Load model file", {}, tr("Model file (*.*)"));
 	if(!filename.isEmpty())
 	{
 		try
 		{
-			GlobalVars().pMeshFile = std::make_unique<CMeshFile>(filename.toStdString());
-			
-			updateStatusBar(QString::fromStdString(MakeString("current file: ", filename.toStdString())));
+			updateStatusBar(QString::fromStdString(MakeString("loading file: ", filename.toStdString())));
+			OpenFile(filename);
+			updateStatusBar(QString::fromStdString(MakeString("loaded file successfully: ", filename.toStdString())));
 		}
 		catch (const std::exception &e)
 		{
@@ -38,13 +44,13 @@ void QtGuiApplication1::OnActionOpen()
 
 void QtGuiApplication1::OnActionSave()
 {
-	QString filename = QFileDialog::getSaveFileName(this, "Save ply file", {}, tr("PLY file (*.ply)"));
+	QString filename = QFileDialog::getSaveFileName(this, "Save model file", {}, tr("PLY file (*.ply)"));
 	if (!filename.isEmpty())
 	{
 		try
 		{
-			if (!GlobalVars().pMeshFile) throw std::runtime_error("nothing to be saved.");
-			GlobalVars().pMeshFile->SaveToFile(filename.toStdString());
+			if (!m_spFile) throw std::runtime_error("nothing to be saved.");
+			m_spFile->SaveToFile(filename.toStdString());
 		}
 		catch (const std::exception &e)
 		{
@@ -55,7 +61,54 @@ void QtGuiApplication1::OnActionSave()
 
 void QtGuiApplication1::OnActionClear()
 {
-	// TO BE DONE
-	
+	// auto freed by RAII
+	m_spFile = nullptr;
+	emit onFileUpdated(m_spFile);
 }
 
+void QtGuiApplication1::OnActionAbout()
+{
+	QMessageBox::about(this, "About", "I am a simple Qt template. \n Made by MoeMod in Fall 2018.");
+}
+
+
+void QtGuiApplication1::dragEnterEvent(QDragEnterEvent *e)
+{
+	// only 1 file is accepted
+	if (e->mimeData()->urls().size() != 1)
+		return;
+
+	e->acceptProposedAction();
+}
+
+void QtGuiApplication1::dropEvent(QDropEvent *e)
+{
+	QList<QUrl> urls = e->mimeData()->urls();
+	if (urls.isEmpty())
+		return;
+
+	QString filename = urls.first().toLocalFile();
+
+	if (filename.isEmpty())
+		return;
+
+	try
+	{
+		updateStatusBar(QString::fromStdString(MakeString("loading file: ", filename.toStdString())));
+		OpenFile(filename);
+		updateStatusBar(QString::fromStdString(MakeString("loaded file successfully: ", filename.toStdString())));
+	}
+	catch (const std::exception & e)
+	{
+		updateStatusBar(QString::fromStdString(MakeString("Error: ", e.what())));
+	}
+}
+
+void QtGuiApplication1::OpenFile(QString filename)
+{
+	auto sp = std::make_shared<CMeshFile>(filename.toStdString());
+
+	emit onFileUpdated(sp);
+
+	m_spFile.swap(sp);
+}
