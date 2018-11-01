@@ -35,8 +35,8 @@ void MyOpenGLWidget::initializeGL()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 
 	float ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
@@ -72,12 +72,26 @@ void MyOpenGLWidget::paintGL()
 	glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
 
 	glPointSize(pointsize);
-	
+
+	// draw line
+	/*glDisable(GL_LIGHTING);
+	glLineWidth(1.0f);
+	glColor3f(0.5f, 0.5f, 0.5f);
+	glBegin(GL_LINES);
+	for(auto &&he : mesh.halfedges())
+	{
+		//链接这个有向边的起点和终点
+		glVertex3fv(mesh.point(mesh.from_vertex_handle(he)).data());
+		glVertex3fv(mesh.point(mesh.to_vertex_handle(he)).data());
+	}
+	glEnd();
+	glEnable(GL_LIGHTING);*/
+
 	// draw face
-	for(auto &face : mesh.faces())
+	for(auto &&face : mesh.faces())
 	{
 		glBegin(GL_TRIANGLES);
-		for(auto &fv : mesh.fv_range(face))
+		for(auto &&fv : mesh.fv_range(face))
 		{
 			glNormal3fv(mesh.normal(fv).data());
 			glVertex3fv(mesh.point(fv).data());
