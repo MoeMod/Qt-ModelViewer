@@ -8,7 +8,7 @@ void CMeshFile::LoadFromFile(const std::string &filename)
 	//如果不存在顶点法线，则报错
 	if (!mesh.has_vertex_normals())
 	{
-		throw std::runtime_error("错误：标准定点属性 “法线”不存在");
+		throw std::runtime_error("error that mesh doesn't have vertex normals");
 	}
 
 	// 读取文件，错误就throw

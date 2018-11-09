@@ -21,20 +21,6 @@
   </property>
   <widget class="MyOpenGLWidget" name="centralWidget"/>
   <widget class="QStatusBar" name="statusBar"/>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextUnderIcon</enum>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>BottomToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -61,8 +47,8 @@
      <string>&amp;Display</string>
     </property>
     <addaction name="actionLight"/>
-    <addaction name="actionShow_Normals"/>
-    <addaction name="actionNormal_Map_Color"/>
+    <addaction name="actionDraw_Wire"/>
+    <addaction name="actionDraw_Face"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -106,6 +92,9 @@
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Light</string>
    </property>
@@ -144,6 +133,25 @@
     <string>Exit(&amp;Q)</string>
    </property>
   </action>
+  <action name="actionDraw_Wire">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw Wire</string>
+   </property>
+  </action>
+  <action name="actionDraw_Face">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw Face</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -159,10 +167,10 @@
     <slot>setYRotation(int)</slot>
     <slot>setZRotation(int)</slot>
     <slot>setLight(bool)</slot>
-    <slot>setShowNormals(bool)</slot>
-    <slot>setNormalMapColor(bool)</slot>
     <slot>onActionSnapshot()</slot>
     <slot>onUpdateContent(std::shared_ptr&lt;CMeshFile&gt;)</slot>
+    <slot>setDrawWire(bool)</slot>
+    <slot>setDrawFace(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -175,38 +183,6 @@
    <signal>toggled(bool)</signal>
    <receiver>centralWidget</receiver>
    <slot>setLight(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>299</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShow_Normals</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>centralWidget</receiver>
-   <slot>setShowNormals(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>299</x>
-     <y>254</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionNormal_Map_Color</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>centralWidget</receiver>
-   <slot>setNormalMapColor(bool)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -279,6 +255,38 @@
     <hint type="destinationlabel">
      <x>299</x>
      <y>234</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDraw_Wire</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>setDrawWire(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>237</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDraw_Face</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>centralWidget</receiver>
+   <slot>setDrawFace(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>299</x>
+     <y>237</y>
     </hint>
    </hints>
   </connection>

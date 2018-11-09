@@ -27,7 +27,7 @@ protected:
 	void dragEnterEvent(QDragEnterEvent *e) override;
 	void dropEvent(QDropEvent *e) override;
 
-private:
+public:
 	void OpenFile(QString str);
 
 private:

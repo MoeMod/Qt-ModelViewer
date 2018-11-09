@@ -22,11 +22,15 @@ QtGuiApplication1::QtGuiApplication1(QWidget *parent)
 	connect(ui.actionAbout, &QAction::triggered, this, &QtGuiApplication1::OnActionAbout);
 	updateStatusBar("Drag model file to open");
 	setAcceptDrops(true);
+
 }
 
+// TODO(MoeMod) : 打开窗口里面应该加入OpenMesh所支持的扩展名限制。
 void QtGuiApplication1::OnActionOpen()
 {
-	QString filename = QFileDialog::getOpenFileName(this, "Load model file", {}, tr("Model file (*.*)"));
+	QString filename = QFileDialog::getOpenFileName(this, "Load model file", {}, tr(
+			"Model file (*.*)"
+			));
 	if(!filename.isEmpty())
 	{
 		try
@@ -44,7 +48,7 @@ void QtGuiApplication1::OnActionOpen()
 
 void QtGuiApplication1::OnActionSave()
 {
-	QString filename = QFileDialog::getSaveFileName(this, "Save model file", {}, tr("PLY file (*.ply)"));
+	QString filename = QFileDialog::getSaveFileName(this, "Save model file", {}, tr("Model file (*.*)"));
 	if (!filename.isEmpty())
 	{
 		try

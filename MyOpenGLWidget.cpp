@@ -7,11 +7,13 @@
 #include <QBitmap.h>
 #include <QMessageBox.h>
 #include <QFileDialog.h>
+#include <QVector3D.h>
 
-#include <qgl.h>
 #include <vector>
+#include "gl_list.h"
 
-static void qNormalizeAngle(int &angle)
+template<class T>
+constexpr void qNormalizeAngle(T &angle)
 {
 	while (angle < 0)
 		angle += 360 * 16;
@@ -19,12 +21,35 @@ static void qNormalizeAngle(int &angle)
 		angle -= 360 * 16;
 }
 
+struct MyOpenGLWidget::impl_t
+{
+	QVector3D vecRot{0,0,0};
+	float scale = 1;
+	float pointsize = 1;
+	QPoint m_LastMousePos;
+
+	std::shared_ptr<CMeshFile> m_spFile;
+
+	bool m_bDrawWire = false;
+	bool m_bDrawFace = true;
+
+	struct GLDrawLists
+	{
+		GL_List showWireList;
+		GL_List showFaceList;
+	};
+	std::unique_ptr<GLDrawLists> m_upGL_List;
+};
+
 MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) : 
-	scale(1.0f), pointsize(1.0f), 
-	m_bShowNormals(false), m_bNormalMapColor(false), 
-	xRot(0), yRot(0), zRot(0)
+	pimpl(std::make_unique<impl_t>())
 {
 	
+}
+
+MyOpenGLWidget::~MyOpenGLWidget()
+{
+	// unique_ptr的析构函数需要impl_t的完整定义，所以这个空析构函数要留下来。
 }
 
 void MyOpenGLWidget::initializeGL()
@@ -34,8 +59,7 @@ void MyOpenGLWidget::initializeGL()
 	glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_CULL_FACE);
 	glShadeModel(GL_SMOOTH);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	setLight(true);
 
 	float ambient[] = { 0.4f, 0.4f, 0.4f, 1.0f };
 	glLightfv(GL_LIGHT0, GL_AMBIENT, ambient);
@@ -57,33 +81,36 @@ void MyOpenGLWidget::paintGL()
 	glEnable(GL_DEPTH_TEST);
 
 	glLoadIdentity();
+	float scale = pimpl->scale;
 	glScalef(scale, scale, scale);
-	glRotatef(xRot / 16.0, 1.0, 0.0, 0.0);
-	glRotatef(yRot / 16.0, 0.0, 1.0, 0.0);
-	glRotatef(zRot / 16.0, 0.0, 0.0, 1.0);
+	glRotatef(pimpl->vecRot.x() / 16.0, 1.0, 0.0, 0.0);
+	glRotatef(pimpl->vecRot.y() / 16.0, 0.0, 1.0, 0.0);
+	glRotatef(pimpl->vecRot.z() / 16.0, 0.0, 0.0, 1.0);
 
 	// nothing to draw
-	if (!m_upGL_List)
+	if (!pimpl->m_upGL_List)
 		return;
 
 	// draw line
-	//m_upGL_List->showWireList.Call();
+	if(pimpl->m_bDrawWire)
+		pimpl->m_upGL_List->showWireList.Call();
 
 	// draw face
-	m_upGL_List->showFaceList.Call();
+	if(pimpl->m_bDrawFace)
+		pimpl->m_upGL_List->showFaceList.Call();
 }
 
 void MyOpenGLWidget::onUpdateContent(std::shared_ptr<CMeshFile> sp)
 {
-	m_spFile = sp;
-	m_upGL_List = nullptr; // resets
+	pimpl->m_spFile = sp;
+	pimpl->m_upGL_List = nullptr; // resets
 
-	if (m_spFile)
+	if (pimpl->m_spFile)
 	{
-		auto &mesh = m_spFile->Data();
-		m_upGL_List = std::make_unique<Lists>();
+		auto &mesh = pimpl->m_spFile->Data();
+		pimpl->m_upGL_List = std::make_unique<impl_t::GLDrawLists>();
 
-		m_upGL_List->showFaceList.New();
+		pimpl->m_upGL_List->showFaceList.New();
 		for (auto &&face : mesh.faces())
 		{
 			glBegin(GL_TRIANGLES);
@@ -94,9 +121,9 @@ void MyOpenGLWidget::onUpdateContent(std::shared_ptr<CMeshFile> sp)
 			}
 			glEnd();
 		}
-		m_upGL_List->showFaceList.End();
+		pimpl->m_upGL_List->showFaceList.End();
 
-		m_upGL_List->showWireList.New();
+		pimpl->m_upGL_List->showWireList.New();
 		glDisable(GL_LIGHTING);
 		glLineWidth(1.0f);
 		glColor3f(0.5f, 0.5f, 0.5f);
@@ -109,7 +136,7 @@ void MyOpenGLWidget::onUpdateContent(std::shared_ptr<CMeshFile> sp)
 		}
 		glEnd();
 		glEnable(GL_LIGHTING);
-		m_upGL_List->showWireList.End();
+		pimpl->m_upGL_List->showWireList.End();
 	}
 
 	updateGL();
@@ -117,40 +144,40 @@ void MyOpenGLWidget::onUpdateContent(std::shared_ptr<CMeshFile> sp)
 
 void MyOpenGLWidget::mousePressEvent(QMouseEvent *event)
 {
-	m_LastMousePos = event->pos();
+	pimpl->m_LastMousePos = event->pos();
 }
 
 void MyOpenGLWidget::mouseMoveEvent(QMouseEvent *event)
 {
-	int dx = event->x() - m_LastMousePos.x();
-	int dy = event->y() - m_LastMousePos.y();
+	int dx = event->x() - pimpl->m_LastMousePos.x();
+	int dy = event->y() - pimpl->m_LastMousePos.y();
 
 	if (event->buttons() & Qt::LeftButton) {
-		setXRotation(xRot + 8 * dy);
-		setYRotation(yRot + 8 * dx);
+		setXRotation(pimpl->vecRot.x() + 8 * dy);
+		setYRotation(pimpl->vecRot.y() + 8 * dx);
 	}
 	else if (event->buttons() & Qt::RightButton) {
-		setXRotation(xRot + 8 * dy);
-		setZRotation(zRot + 8 * dx);
+		setXRotation(pimpl->vecRot.x() + 8 * dy);
+		setZRotation(pimpl->vecRot.z() + 8 * dx);
 	}
 
-	m_LastMousePos = event->pos();
+	pimpl->m_LastMousePos = event->pos();
 }
 
 void MyOpenGLWidget::wheelEvent(QWheelEvent *event)
 {
 	if (event->modifiers() & Qt::CTRL)
-		pointsize = std::fabs(pointsize + 0.001f * event->delta());
+		pimpl->pointsize = std::fabs(pimpl->pointsize + 0.001f * event->delta());
 	else
-		scale *= std::pow(1.001f, event->delta());
+		pimpl->scale *= std::pow(1.001f, event->delta());
 	updateGL();
 }
 
 void MyOpenGLWidget::setXRotation(int angle)
 {
 	qNormalizeAngle(angle);
-	if (angle != xRot) {
-		xRot = angle;
+	if (angle != pimpl->vecRot.x()) {
+		pimpl->vecRot.setX(angle);
 		emit xRotationChanged(angle);
 		updateGL();
 	}
@@ -159,8 +186,8 @@ void MyOpenGLWidget::setXRotation(int angle)
 void MyOpenGLWidget::setYRotation(int angle)
 {
 	qNormalizeAngle(angle);
-	if (angle != yRot) {
-		yRot = angle;
+	if (angle != pimpl->vecRot.y()) {
+		pimpl->vecRot.setY(angle);
 		emit yRotationChanged(angle);
 		updateGL();
 	}
@@ -169,8 +196,8 @@ void MyOpenGLWidget::setYRotation(int angle)
 void MyOpenGLWidget::setZRotation(int angle)
 {
 	qNormalizeAngle(angle);
-	if (angle != zRot) {
-		zRot = angle;
+	if (angle != pimpl->vecRot.z()) {
+		pimpl->vecRot.setZ(angle);
 		emit zRotationChanged(angle);
 		updateGL();
 	}
@@ -183,18 +210,19 @@ void MyOpenGLWidget::setLight(bool b)
 	updateGL();
 }
 
-void MyOpenGLWidget::setShowNormals(bool b)
+void MyOpenGLWidget::setDrawWire(bool b)
 {
-	m_bShowNormals = b;
+	pimpl->m_bDrawWire = b;
 	updateGL();
 }
 
-void MyOpenGLWidget::setNormalMapColor(bool b)
+void MyOpenGLWidget::setDrawFace(bool b)
 {
-	m_bNormalMapColor = b;
+	pimpl->m_bDrawFace = b;
 	updateGL();
 }
 
+// TODO(MoeMod) : macOS上面截图为空白，Windows测试成功，需要修复。另外除了支持BMP以外还要支持其他图片格式的输出。
 void MyOpenGLWidget::onActionSnapshot()
 {
 	int w = this->width();

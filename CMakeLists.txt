@@ -13,8 +13,8 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# 项目使用C++17标准，建议使用msvc2017、clang5.0、gcc7.1以上版本编译
-set(CMAKE_CXX_STANDARD 17)
+# 项目使用C++14标准，建议使用msvc2015、clang5.0、gcc7.1以上版本编译
+set(CMAKE_CXX_STANDARD 14)
 
 # 头文件查找目录
 include_directories (
