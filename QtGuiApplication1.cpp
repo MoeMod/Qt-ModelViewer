@@ -66,8 +66,8 @@ void QtGuiApplication1::OnActionSave()
 void QtGuiApplication1::OnActionClear()
 {
 	// auto freed by RAII
+	emit onFileUpdated(nullptr);
 	m_spFile = nullptr;
-	emit onFileUpdated(m_spFile);
 }
 
 void QtGuiApplication1::OnActionAbout()

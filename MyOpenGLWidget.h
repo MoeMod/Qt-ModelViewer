@@ -38,6 +38,6 @@ public slots:
 
 private:
 	struct impl_t;
-	std::unique_ptr<impl_t> pimpl;
+	const std::unique_ptr<impl_t> pimpl;
 
 };
