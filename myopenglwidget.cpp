@@ -1,13 +1,14 @@
-#include "MyOpenGLWidget.h"
+#include "myopenglwidget.h"
 #include "MeshFile.h"
 
-#include <QEvent.h>
-#include <QApplication.h>
-#include <QClipboard.h>
-#include <QBitmap.h>
-#include <QMessageBox.h>
-#include <QFileDialog.h>
-#include <QVector3D.h>
+#include <QEvent>
+#include <QApplication>
+#include <QClipboard>
+#include <QBitmap>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QVector3D>
+#include <QMouseEvent>
 
 #include <vector>
 #include "gl_list.h"
@@ -41,7 +42,7 @@ struct MyOpenGLWidget::impl_t
 	std::unique_ptr<GLDrawLists> m_upGL_List;
 };
 
-MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) : 
+MyOpenGLWidget::MyOpenGLWidget(QWidget *parent) :
 	pimpl(std::make_unique<impl_t>())
 {
 	

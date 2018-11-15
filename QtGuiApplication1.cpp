@@ -1,7 +1,7 @@
 #include "QtGuiApplication1.h"
 
-#include <QFileDialog.h>
-#include <QMessageBox.h>
+#include <QFileDialog>
+#include <QMessageBox>
 
 #include <QDropEvent>
 #include <QDragEnterEvent>

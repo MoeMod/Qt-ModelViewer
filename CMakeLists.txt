@@ -1,27 +1,27 @@
-# QtGuiApplication1 CMakeLists.txt
-# Ê¹ÓÃCMakeÔÚ¸÷¸öÆ½Ì¨±àÒë±¾ÏîÄ¿
-# ×÷Õß£ºÃ··åÔ´£¨MoeMod£©
 
-# 2018/10/31 ¿ªÊ¼Õâ¸öÏîÄ¿¡£ÍòÊ¥½Ú¿ìÀÖ£¡
+# Ê¹ï¿½ï¿½CMakeï¿½Ú¸ï¿½ï¿½ï¿½Æ½Ì¨ï¿½ï¿½ï¿½ë±¾ï¿½ï¿½Ä¿
+# ï¿½ï¿½ï¿½ß£ï¿½Ã·ï¿½ï¿½Ô´ï¿½ï¿½MoeModï¿½ï¿½
+
+# 2018/10/31 ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Ê¥ï¿½Ú¿ï¿½ï¿½Ö£ï¿½
 
 cmake_minimum_required(VERSION 3.1.3)
 project(QtGuiApplication1)
 
-# ÊôÐÔÉèÖÃ
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTORCC ON)
 
-# ÏîÄ¿Ê¹ÓÃC++14±ê×¼£¬½¨ÒéÊ¹ÓÃmsvc2015¡¢clang5.0¡¢gcc7.1ÒÔÉÏ°æ±¾±àÒë
+# ï¿½ï¿½Ä¿Ê¹ï¿½ï¿½C++14ï¿½ï¿½×¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½msvc2015ï¿½ï¿½clang5.0ï¿½ï¿½gcc7.1ï¿½ï¿½ï¿½Ï°æ±¾ï¿½ï¿½ï¿½ï¿½
 set(CMAKE_CXX_STANDARD 14)
 
-# Í·ÎÄ¼þ²éÕÒÄ¿Â¼
+# Í·ï¿½Ä¼ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿Â¼
 include_directories (
 	./OpenMesh/src/
 )
 
-# Ìí¼ÓÏîÄ¿ÎÄ¼þ
+# ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½Ä¼ï¿½
 file(GLOB FILE_RES 
 	./QtGuiApplication1.qrc
 )
@@ -30,46 +30,44 @@ file(GLOB FILE_UI
 )
 file(GLOB FILE_MOC 
 	./QtGuiApplication1.h
-	./MyOpenGLWidget.h
+		myopenglwidget.h
 )
 file(GLOB FILE_SRC 
 	./QtGuiApplication1.cpp
-	./MyOpenGLWidget.cpp
+		myopenglwidget.cpp
 	
 	./main.cpp
 	./MeshFile.cpp
 
 )
 
-# ²éÕÒQt5
-# Ê¹ÓÃMSVCÊ±ÐèÒªCMakeSettings.jsonÀïÃæÌí¼ÓcmakeCommandArgs²ÎÊý-DQt5_DIR=D:\\Qt\\Qt5.11.1\\5.11.1\\msvc2017_64\\lib\\cmake\\Qt5
-# ·ñÔò¿ÉÄÜÕÒ²»µ½CMake¿âµÄÎ»ÖÃ£¨msvc2017_64ÊÇ64Î»µÄ¿â£¬32Î»Çë×ÔÐÐ¸ü»»£©
+# ï¿½ï¿½ï¿½ï¿½Qt5
+# Ê¹ï¿½ï¿½MSVCÊ±ï¿½ï¿½ÒªCMakeSettings.jsonï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cmakeCommandArgsï¿½ï¿½ï¿½ï¿½-DQt5_DIR=D:\\Qt\\Qt5.11.1\\5.11.1\\msvc2017_64\\lib\\cmake\\Qt5
+# ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò²ï¿½ï¿½ï¿½CMakeï¿½ï¿½ï¿½Î»ï¿½Ã£ï¿½msvc2017_64ï¿½ï¿½64Î»ï¿½Ä¿â£¬32Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ð¸ï¿½ï¿½ï¿½ï¿½ï¿½
 find_package(Qt5 REQUIRED Core Widgets OpenGL)
 
-# ²éÕÒOpenGL£¬ linuxÓÃapt-get°²×°libgl1-mesa-dev
-find_package( opengl REQUIRED )
-
-# ²éÕÒOpenMesh
-# ÏÂÔØÒÔºó·Åµ½OpenMeshÎÄ¼þ¼Ð
-# »òÕßÖ±½Ógit clone https://www.graphics.rwth-aachen.de:9000/OpenMesh/OpenMesh.git
+# ï¿½ï¿½ï¿½ï¿½OpenMesh
+# ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½Åµï¿½OpenMeshï¿½Ä¼ï¿½ï¿½ï¿½
+# ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½git clone https://www.graphics.rwth-aachen.de:9000/OpenMesh/OpenMesh.git
 ADD_SUBDIRECTORY(OpenMesh)
-# ÐÞ¸´Ò»Ð©ÄªÃûÆäÃîµÄ±àÒë´íÎó
+# ï¿½Þ¸ï¿½Ò»Ð©Äªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 add_definitions(-D_USE_MATH_DEFINES)
 
-# ²»ÖªµÀÎªÊ²Ã´macOS 10.14Å×ÆúÁËopengl...
+# ï¿½ï¿½Öªï¿½ï¿½ÎªÊ²Ã´macOS 10.14ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½opengl...
 if(APPLE)
+	find_package( opengl REQUIRED )
 	add_definitions(-DGL_SILENCE_DEPRECATION)
 endif()
 
-# ÈÃQtÉú³Émoc´úÂë
+# ï¿½ï¿½Qtï¿½ï¿½ï¿½ï¿½mocï¿½ï¿½ï¿½ï¿½
 qt5_wrap_cpp( GEN_MOC ${FILE_MOC})
 qt5_wrap_ui( GEN_UIC ${FILE_UI})
 qt5_add_resources( GEN_RCC ${FILE_RES})
 
-# Ö¸¶¨Êä³öÎÄ¼þ
+# Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¼ï¿½
 add_executable(QtGuiApplication1 ${FILE_RES} ${FILE_UI} ${FILE_SRC} ${GEN_MOC} ${GEN_UIC} ${GEN_RCC})
 
-# Á´½Ó¸Õ²ÅÄÇÐ©¿â
+# ï¿½ï¿½ï¿½Ó¸Õ²ï¿½ï¿½ï¿½Ð©ï¿½ï¿½
 target_link_libraries(QtGuiApplication1 Qt5::Core Qt5::Widgets Qt5::OpenGL)
-target_link_libraries(QtGuiApplication1 ${OPENGL_LIBRARY})
+target_link_libraries(QtGuiApplication1 GL)
 target_link_libraries(QtGuiApplication1 OpenMeshCore)
